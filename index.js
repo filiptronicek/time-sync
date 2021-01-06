@@ -1,10 +1,11 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
-async function get() {
-    const url = `http://worldtimeapi.org/api/ip`;
-    const response = await fetch(url);
-    const now = new Date().getTime();
-
-    return await response.json().unixtime - now;
+export const getMsDelay = async () => {
+    const timestamp = Date.now();
+    const serverResponce = await fetch(`https://time.filiptronicek.workers.dev/?ts=${timestamp}`)
+    const serverResponceJSON = await serverResponce.json();
+    const nowstamp = Date.now()
+    return { adjusted: Math.round(serverResponceJSON.result.ms - (nowstamp - timestamp) / 2), raw: serverResponceJSON.result.ms }
 }
-console.log(get());
+
+getMsDelay().then(res => console.log(res))
